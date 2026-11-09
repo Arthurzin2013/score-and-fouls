@@ -1,1 +1,328 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score and Fouls</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --accent-color: #ff4757;
+            --green-color: #2ed573;
+            --amber-color: #ffa502;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-color);
+        }
+
+        /* Cronômetro */
+        .timer-container {
+            background: var(--card-bg);
+            padding: 15px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px solid var(--accent-color);
+        }
+
+        #timer {
+            font-size: 3.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .timer-btn {
+            background-color: #4b4b4b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 5px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .timer-btn:hover {
+            background-color: #666;
+        }
+
+        #startBtn { background-color: var(--green-color); color: #000; font-weight: bold; }
+        #stopBtn { background-color: var(--accent-color); color: white; font-weight: bold; }
+
+        /* Placar Principal */
+        .scoreboard {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 800px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .team-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-name {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            outline: none;
+        }
+
+        /* Seções de Pontos e Faltas */
+        .section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #aaa;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        .score-display {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--green-color);
+        }
+
+        .fouls-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--amber-color);
+        }
+
+        /* Botões de Controle */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 60px;
+        }
+
+        .btn-plus {
+            background-color: #444;
+            color: white;
+        }
+        .btn-plus:hover { background-color: #555; }
+
+        .btn-minus {
+            background-color: #333;
+            color: #888;
+        }
+        .btn-minus:hover { background-color: #444; color: white; }
+
+        /* Botão Reset Geral */
+        .reset-all-container {
+            margin-top: 40px;
+        }
+
+        .btn-reset-all {
+            background-color: #c1313e;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn-reset-all:hover {
+            background-color: #ff4757;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Score and Fouls</h1>
+
+    <!-- CRONÔMETRO -->
+    <div class="timer-container">
+        <div id="timer">00:00</div>
+        <button class="timer-btn" id="startBtn" onclick="startTimer()">Iniciar</button>
+        <button class="timer-btn" id="stopBtn" onclick="stopTimer()">Pausar</button>
+        <button class="timer-btn" onclick="resetTimer()">Zerar Tempo</button>
+    </div>
+
+    <!-- PLACAR DOS TIMES -->
+    <div class="scoreboard">
+        
+        <!-- TIME A -->
+        <div class="team-card">
+            <div class="team-name" contenteditable="true">TIME VISITANTE</div>
+            
+            <div class="section-title">Pontos</div>
+            <div class="score-display" id="scoreA">0</div>
+            <div class="btn-group">
+                <button class="control-btn btn-minus" onclick="changeScore('A', -1)">-</button>
+                <button class="control-btn btn-plus" onclick="changeScore('A', 1)">+</button>
+            </div>
+
+            <div class="section-title">Faltas</div>
+            <div class="fouls-display" id="foulsA">0</div>
+            <div class="btn-group">
+                <button class="control-btn btn-minus" onclick="changeFouls('A', -1)">-</button>
+                <button class="control-btn btn-plus" onclick="changeFouls('A', 1)">+</button>
+            </div>
+        </div>
+
+        <!-- TIME B -->
+        <div class="team-card">
+            <div class="team-name" contenteditable="true">TIME DA CASA</div>
+            
+            <div class="section-title">Pontos</div>
+            <div class="score-display" id="scoreB">0</div>
+            <div class="btn-group">
+                <button class="control-btn btn-minus" onclick="changeScore('B', -1)">-</button>
+                <button class="control-btn btn-plus" onclick="changeScore('B', 1)">+</button>
+            </div>
+
+            <div class="section-title">Faltas</div>
+            <div class="fouls-display" id="foulsB">0</div>
+            <div class="btn-group">
+                <button class="control-btn btn-minus" onclick="changeFouls('B', -1)">-</button>
+                <button class="control-btn btn-plus" onclick="changeFouls('B', 1)">+</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RESET GERAL -->
+    <div class="reset-all-container">
+        <button class="btn-reset-all" onclick="resetMatch()">Zerar Partida Completa</button>
+    </div>
+
+    <script>
+        // Variáveis de estado do jogo
+        let scoreA = 0;
+        let scoreB = 0;
+        let foulsA = 0;
+        let foulsB = 0;
+
+        // Variáveis do Cronômetro
+        let timerInterval;
+        let totalSeconds = 0;
+        let isRunning = false;
+
+        // Funções para alterar Pontuação
+        function changeScore(team, value) {
+            if (team === 'A') {
+                scoreA = Math.max(0, scoreA + value); // Evita números negativos
+                document.getElementById('scoreA').innerText = scoreA;
+            } else {
+                scoreB = Math.max(0, scoreB + value);
+                document.getElementById('scoreB').innerText = scoreB;
+            }
+        }
+
+        // Funções para alterar Faltas
+        function changeFouls(team, value) {
+            if (team === 'A') {
+                foulsA = Math.max(0, foulsA + value);
+                document.getElementById('foulsA').innerText = foulsA;
+            } else {
+                foulsB = Math.max(0, foulsB + value);
+                document.getElementById('foulsB').innerText = foulsB;
+            }
+        }
+
+        // Lógica do Cronômetro
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    totalSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            totalSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            document.getElementById('timer').innerText = `${formattedMinutes}:${formattedSeconds}`;
+        }
+
+        // Reset Total
+        function resetMatch() {
+            if(confirm("Tem certeza que deseja zerar todo o placar e cronômetro?")) {
+                scoreA = 0;
+                scoreB = 0;
+                foulsA = 0;
+                foulsB = 0;
+                document.getElementById('scoreA').innerText = 0;
+                document.getElementById('scoreB').innerText = 0;
+                document.getElementById('foulsA').innerText = 0;
+                document.getElementById('foulsB').innerText = 0;
+                resetTimer();
+            }
+        }
+    </script>
+</body>
+</html>
